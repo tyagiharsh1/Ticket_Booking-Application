@@ -1,0 +1,82 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+build:
+  # local:
+  #   push: true
+  # tagPolicy:
+  #   sha256: {}
+  artifacts:
+    - image: webmakaka/microservices-auth
+      context: ../app/auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: webmakaka/microservices-client
+      context: ../app/client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
+    - image: webmakaka/microservices-tickets
+      context: ../app/tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: webmakaka/microservices-orders
+      context: ../app/orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: webmakaka/microservices-expiration
+      context: ../app/expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: webmakaka/microservices-payments
+      context: ../app/payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+# deploy:
+#   helm:
+#     releases:
+#       - name: microservices-helm
+#         namespace: default
+#         recreatePods: true
+#         chartPath: ../k8s/helm/microservices/
+#         skipBuildDependencies: true
+
+#         artifactOverrides:
+#           auth:
+#             image: webmakaka/microservices-auth
+
+#         imageStrategy:
+#           helm: {}
+
+deploy:
+  kubectl:
+    manifests:
+      - ../k8s/helm/microservices/charts/auth/templates/*
+      - ../k8s/helm/microservices/charts/client/templates/*
+      - ../k8s/helm/microservices/charts/tickets/templates/*
+      - ../k8s/helm/microservices/charts/nats/templates/*
+      - ../k8s/helm/microservices/charts/orders/templates/*
+      - ../k8s/helm/microservices/charts/expiration/templates/*
+      - ../k8s/helm/microservices/charts/payments/templates/*
